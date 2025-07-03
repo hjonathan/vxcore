@@ -1,0 +1,32 @@
+{
+  "name": "vxcore",
+  "version": "1.0.0",
+  "main": "index.js",
+  "type": "module",
+  "scripts": {
+    "start:main": "node main.js",
+    "start": "node index.js",
+    "dev": "nodemon index.js",
+    "examples": "node examples.js",
+    "query": "node query-example.js",
+    "query:interactive": "node query-example.js --interactive",
+    "test:json": "node test-json-processing.js",
+    "debug": "node debug-response.js",
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "description": "",
+  "dependencies": {
+    "@google/genai": "^1.7.0",
+    "@google/generative-ai": "^0.24.1",
+    "cors": "^2.8.5",
+    "dotenv": "^16.3.1",
+    "express": "^4.18.2",
+    "node-fetch": "^3.3.2"
+  },
+  "devDependencies": {
+    "nodemon": "^3.0.2"
+  }
+}
