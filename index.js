@@ -3,6 +3,9 @@ import cors from 'cors';
 import { GoogleGenAI } from '@google/genai';
 import dotenv from 'dotenv';
 import { processGeminiResponse, processOperationResponse } from './json-processor.js';
+import { extractJsonContent } from './json_extractor.js';
+
+
 dotenv.config();
 
 const app = express();
@@ -32,41 +35,45 @@ app.get('/health', (req, res) => {
 // Simple query endpoint - based on main.js pattern
 app.post('/query', async (req, res) => {
   try {
-    const { query, model = 'gemini-2.5-flash' } = req.body;
+    const { model = 'gemini-2.5-flash', form = '', query = ''} = req.body;
 
-    if (!query) {
-      return res.status(400).json({ 
-        error: 'Query is required' 
-      });
+    const contents = `
+    DATOS DE ENTRADA PARA PROCESAR:
+    {
+      form: ${form}, // html del formulario anterior
+      query: ${query}, // operacion a realizar sobre el formulario o el nodo seleccionado
     }
 
-    if (!apiKey) {
-      return res.status(500).json({ 
-        error: 'API key is not configured' 
-      });
+    CONTRUCCION DE HTML:
+    - Cualquier cambio que realices sobre el html, debes hacerlo en el objeto de retorno form a menos que se te pida crear una nuevo html
+    - Usa tailwind css para cualquier cambio de estilo
+    - No puedes inyectar estilos css con etiquetas style, debes usar tailwind css
+
+    FORMATO JSON DE RETORNO:
+    { 
+      form: <formulario>, // devolvemos el formulario modificado si changes esta seteada en form
+      query: <operacion>, // operacion realizada sobre el formulario o el nodo seleccionado
     }
+    `;
 
-    const contents = 'Devuelve el resultado de la siguiente operacion: ' + query + ' en este formato: {result: <resultado>, operacion: <operacion>} ; <resultado> es el html generado y <operacion> es la operacion realizada';
-
+    console.log("QUERY: ", contents);
+    
     // Generate content using the same pattern as main.js
     const response = await ai.models.generateContent({
       model: model,
       contents: contents,
     });
 
+    console.log("RESPONSE: ", response.text);
+
     const rawResponse = response.text;
     
     // Procesar la respuesta JSON automáticamente
-    const processedResponse = processOperationResponse(rawResponse);
+    const processedResponse = extractJsonContent(rawResponse);
+
+    console.log("PROCESSED RESPONSE: ", processedResponse);
     
-    res.json({
-      success: true,
-      query: query,
-      rawResponse: rawResponse,
-      processedResponse: processedResponse,
-      model: model,
-      timestamp: new Date().toISOString()
-    });
+    res.json(JSON.parse(processedResponse));
 
   } catch (error) {
     console.error('Error in query endpoint:', error);
@@ -76,6 +83,226 @@ app.post('/query', async (req, res) => {
     });
   }
 });
+
+// Simple query endpoint - based on main.js pattern
+app.post('/queryAdvanced', async (req, res) => {
+  try {
+    const { model = 'gemini-2.5-flash', form = '', query = '', nodeSelected = null, changes = 'form', data= {}, functions= {}} = req.body;
+
+    const contents = `
+    DATOS DE ENTRADA PARA PROCESAR:
+    {
+      form: ${form}, // html del formulario anterior
+      nodeSelected: ${nodeSelected}, // nodo seleccionado 
+      changes: ${changes}, // si esta propiedad esta seteada en form, se realizara la operacion sobre el formulario, si esta seteada en nodeSelected, se realizara la operacion sobre el nodo seleccionado
+      query: ${query}, // operacion a realizar sobre el formulario o el nodo seleccionado
+      data: ${JSON.stringify(data)}, // objeto json con los datos del formulario
+      functions: ${JSON.stringify(functions)} // objeto json con las funciones que se han creado
+    }
+
+    CONTRUCCION DE HTML:
+    - Para acceder a datos a variables o funciones usar directamente el nombre de la variable o funcion
+    - Cualquier cambio que realices sobre el html, debes hacerlo en el objeto de retorno form
+    - Usa tailwind css para cualquier cambio de estilo
+    - No puedes inyectar estilos css con etiquetas style, debes usar tailwind css
+    - Para usar variables del objeto DATA  un html, usa notacion Vue 3.<tag>{{myVariable}}</tag> o <tag v-model="myVariable"></tag> similar a Vue 3 no es necesario usar data.myVariable, directamente myVariable
+    - Para asignar un evento a un html, usa notacion Vue 3. @<evento>="myFunction" similar a Vue 3, myFunction es el nombre de la funcion que se creara en el objeto de retorno functions
+    - Nunca debes usar @submit.prevent="myFunction">, para usar el submit de un formulario, usa en el boton de submit<button @click="myFunction">
+    - Para usar una funcion en el html, usa notacion Vue 3. directamente nombre de la funcion, ejemplo <button @click="myFunction"> no es necesario usar functions.myFunction
+    
+
+    CONSTRUCCIÓN DE FUNCIONES
+    ## ESTRUCTURA BÁSICA DE FUNCIONES
+
+    ### REQUISITOS OBLIGATORIOS:
+    - **Todas las funciones deben crearse en el objeto de retorno functions**
+    - **Usar el objeto this para acceder a variables y funciones**
+    - **Seguir la estructura estándar definida**
+
+    ### ESTRUCTURA DE UNA FUNCIÓN:
+
+  \`\`\`javascript
+  {
+    "nombreFuncion": {
+      "args": "", //
+      "handler": "// Cuerpo de la función aquí",
+      "name": "nombreFuncion",
+      "category": "Categoría del método",
+      "description": "Descripción breve de la funcionalidad"
+    }
+  }
+  \`\`\`
+
+  ## ACCESO A VARIABLES Y FUNCIONES
+
+  ### ACCESO A VARIABLES:
+  \`\`\`javascript
+  // Variables simples
+  const valor = this.miVariable;
+
+  // Variables anidadas
+  const valorAnidado = this.miVariable.propiedad;
+
+  // Variables de arrays
+  const elemento = this.miArray[0];
+  \`\`\`
+
+  ### ASIGNACIÓN DE VALORES:
+  \`\`\`javascript
+  // Variables simples
+  this.miVariable = nuevoValor;
+
+  // Variables anidadas
+  this.miVariable.propiedad = nuevoValor;
+
+  // Propiedades de objetos
+  this.miObjeto.hasError = true;
+  this.miObjeto.isLoading = false;
+  \`\`\`
+
+  ### LLAMADA A FUNCIONES:
+  \`\`\`javascript
+  // Llamar otras funciones
+  this.otraFuncion();
+
+  // Con parámetros
+  this.otraFuncion(parametro1, parametro2);
+  \`\`\`
+
+  ## EJEMPLOS PRÁCTICOS
+
+  ### FUNCIÓN SIMPLE:
+  \`\`\`javascript
+  {
+    "actualizarDatos": {
+      "args": "",
+      "handler": "this.datos = this.datos.map(item => ({...item, actualizado: true}));",
+      "name": "actualizarDatos",
+      "category": "Data Management",
+      "description": "Actualiza el estado de todos los elementos en datos"
+    }
+  }
+  \`\`\`
+
+  ### FUNCIÓN CON VALIDACIÓN:
+  \`\`\`javascript
+  {
+    "validarFormulario": {
+      "args": "",
+      "handler": "this.formulario.hasError = !this.formulario.nombre; this.formulario.isValid = !this.formulario.hasError;",
+      "name": "validarFormulario",
+      "category": "Validation",
+      "description": "Valida los campos del formulario y actualiza estados"
+    }
+  }
+  \`\`\`
+
+  ### FUNCIÓN CON ARRAYS:
+  \`\`\`javascript
+  {
+    "agregarElemento": {
+      "args": "",
+      "handler": "this.lista.push({id: Date.now(), nombre: 'Nuevo elemento'});",
+      "name": "agregarElemento",
+      "category": "Array Operations",
+      "description": "Agrega un nuevo elemento al array de lista"
+    }
+  }
+  \`\`\`
+
+  ## REGLAS IMPORTANTES
+
+  ### ✅ HACER:
+  - Usar this.variable para acceder a variables
+  - Usar this.variable = valor para asignar
+  - Crear funciones en el objeto functions
+  - Incluir categoría y descripción descriptivas
+
+  ### ❌ NO HACER:
+  - No crear funciones fuera del objeto functions
+  - No omitir categoría o descripción
+
+  ## CATEGORÍAS SUGERIDAS:
+  - **Data Management**: Operaciones con datos
+  - **Validation**: Validaciones y verificaciones
+  - **UI Control**: Control de interfaz de usuario
+  - **Array Operations**: Operaciones con arrays
+  - **Object Operations**: Operaciones con objetos
+  - **Event Handlers**: Manejadores de eventos
+  - **Utility**: Funciones utilitarias
+
+  ## PATRONES COMUNES
+  ### MANEJO DE ESTADOS:
+  \`\`\`javascript
+  // Activar/desactivar estados
+  this.isLoading = true;
+  this.hasError = false;
+  this.isValid = true;
+  \`\`\`
+
+    ### OPERACIONES CON ARRAYS:
+    \`\`\`javascript
+    // Agregar elemento
+    this.array.push(nuevoElemento);
+
+    // Eliminar elemento
+    this.array = this.array.filter(item => item.id !== id);
+
+    // Actualizar elemento
+    this.array = this.array.map(item => 
+      item.id === id ? {...item, actualizado: true} : item
+    );
+    \`\`\` 
+
+    ### VALIDACIONES:
+    \`\`\`javascript
+    // Validación simple
+    this.form.isValid = this.form.nombre.length > 0;
+
+    // Validación múltiple
+    this.form.hasError = !this.form.email || !this.form.password;
+    \`\`\`
+
+
+    FORMATO DE RETORNO:
+    {
+      form: <formulario>, // devolvemos el formulario modificado si changes esta seteada en form
+      nodeSelected: <nodo seleccionado>, // devolvemos el nodo seleccionado si changes esta seteada en nodeSelected
+      changes: <'form' | 'nodeSelected'>, // si esta propiedad esta seteada en form, se realizara la operacion sobre el formulario, si esta seteada en nodeSelected, se realizara la operacion sobre el nodo seleccionado
+      query: <operacion>, // operacion realizada sobre el formulario o el nodo seleccionado
+      data: <datos>, // objeto json con los datos del formulario(siempre que aumentes variables)
+      functions: <funciones> // objeto json con las funciones que has creado en el proceso
+    }
+    `;
+
+    console.log("QUERY: ", contents);
+    
+    // Generate content using the same pattern as main.js
+    const response = await ai.models.generateContent({
+      model: model,
+      contents: contents,
+    });
+
+    console.log("RESPONSE: ", response.text);
+
+    const rawResponse = response.text;
+    
+    // Procesar la respuesta JSON automáticamente
+    const processedResponse = extractJsonContent(rawResponse);
+
+    console.log("PROCESSED RESPONSE: ", processedResponse);
+    
+    res.json(JSON.parse(processedResponse));
+
+  } catch (error) {
+    console.error('Error in query endpoint:', error);
+    res.status(500).json({
+      error: 'Failed to generate response',
+      details: error.message
+    });
+  }
+});
+
 
 // Main chat endpoint using the new genai library
 app.post('/chat', async (req, res) => {

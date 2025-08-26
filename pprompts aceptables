@@ -1,0 +1,159 @@
+Genera un HTML moderno para una aplicación de dashboard financiero con las siguientes características:
+
+### Estructura principal:
+- Un `<main>` contenedor principal
+- Header con título, navegación de filtros temporales y botón de acción
+- Sección de estadísticas con 4 métricas en grid
+- Sección de actividad reciente con tabla de transacciones
+- Sección de clientes recientes con cards
+
+### Header:
+- Título principal "Cashflow" 
+- Navegación con enlaces: "Last 7 days", "Last 30 days", "All-time"
+- Botón "New invoice" con icono SVG de plus
+- Usar clases Tailwind CSS para responsive design
+
+### Sección de Stats:
+- Grid de 4 columnas con métricas financieras
+- Cada métrica debe incluir:
+  - Etiqueta (Revenue, Overdue invoices, Outstanding invoices, Expenses)
+  - Porcentaje de cambio con color (verde para positivo, rojo para negativo)
+  - Valor principal en formato de moneda
+- Usar `dl`, `dt`, `dd` para estructura semántica
+
+### Sección de Actividad Reciente:
+- Tabla con transacciones
+- Columnas: Amount, Client, Actions
+- Cada fila debe incluir:
+  - Icono SVG representando el tipo de transacción
+  - Monto y estado (Paid, Overdue, Withdraw)
+  - Cliente y descripción
+  - Enlace "View transaction" y número de factura
+- Usar colores para estados: verde (Paid), rojo (Overdue), gris (Withdraw)
+
+### Sección de Clientes Recientes:
+- Grid de 3 columnas con cards de clientes
+- Cada card debe incluir:
+  - Logo/imagen del cliente
+  - Nombre del cliente
+  - Botón de opciones (3 puntos)
+  - Información: última factura y monto con estado
+
+### Estilos:
+- Usar Tailwind CSS con clases como:
+  - `text-gray-900`, `text-gray-500`, `text-gray-700` para texto
+  - `bg-indigo-600`, `bg-green-50`, `bg-red-50` para colores
+  - `rounded-md`, `rounded-xl` para bordes
+  - `border-gray-200`, `border-gray-100` para bordes
+  - `ring-1` para anillos de estado
+- Diseño responsive con breakpoints `sm:`, `lg:`, `xl:`
+- Espaciado consistente con `px-4`, `py-5`, `gap-x-6`
+
+### Elementos visuales:
+- Iconos SVG para transacciones y botones
+- Gradientes y efectos visuales sutiles
+- Estados visuales claros para diferentes tipos de transacciones
+- Hover states en enlaces y botones
+
+El resultado debe ser un dashboard financiero moderno, limpio y profesional con excelente UX.
+
+
+/////////////////
+
+Tu tarea es generar un diseñador de diagramas de flujo interactivo y funcional.
+
+**Requisitos Principales:**
+1.  **Interfaz de usuario:**
+    * Un área de trabajo principal en un tag Canva (lienzo) donde se puedan colocar los elementos.
+    * Una paleta de componentes a un lado (barra lateral inferior) que contenga las figuras básicas de un diagrama de flujo (Inicio/Fin, Proceso, Decisión, Entrada/Salida) cada uno de ellos con sus respectivos iconos.
+    * Agrega las instrucciones de uso en la cabecera para arrastrar y conectar componentes
+2.  **Funcionalidad Drag and Drop:**
+    * Los usuarios deben poder arrastrar componentes desde la paleta y soltarlos en el lienzo.
+    * Una vez en el lienzo, los componentes deben ser reubicables (poder arrastrarlos y soltarlos en otra posición).
+
+3.  **Conexiones:**
+    * Debe ser posible crear líneas de conexión entre los puntos de anclaje de los diferentes componentes.
+4.  **Edición y Personalización:**
+    * Hacer doble clic en un componente o una línea debe permitir al usuario editar el texto asociado.
+    * Los componentes deben tener un estilo visual claro y legible.
+
+
+
+crear un bar chart en canvas html tag por cada mes de año con datos de ejemplo
+
+crear un donut chart en canvas html tag con diversos colores
+
+crear un radar chart en canvas html tag con diversos colores
+
+
+TABLERO TIPO TRELLO
+Crea un tablero tipo Trello moderno con tema dark para gestión de flujo de desarrollo, con iconos y colores modernos
+
+Anade iconos para eliminar listados y eliminar los cards
+
+
+
+ Carga de informacion desde variables:
+ Añadir estas FUNCIONALIDADES:
+- Agregar/quitar listas (columnas)
+- Agregar/eliminar cards dentro de listas
+- Drag and drop visual (indicadores) de los cards
+
+
+
+
+
+PROMPT PARA DASHBOARD
+Genera un dashboard HTML moderno con tema dark con iconos y colores . Incluye una sección adicional para un gráfico de barras.
+Sección Superior: Cuatro tarjetas de resumen, todas en una misma fila horizontal.
+Sección Central: Lista de actividad reciente con iconos y etiquetas de estado ("Pagado" / "Vencido").
+Sección Inferior: Tres tarjetas de cliente, todas en una misma fila horizontal.
+Nueva Sección: Un gráfico de barras de "Ingresos Mensuales" con 12 barras (una por mes) y datos ficticios por defecto.
+Usa un diseño limpio, sombras sutiles y marcadores de posición para imágenes/iconos.
+
+
+
+
+
+
+ Carga toda la informacion de las secciones desde variables:
+ Añadir estas FUNCIONALIDADES:
+- Agregar/quitar registros por un boton en la seccion ACTIVIDAD RECIENTE
+- Animar y mostrar informacion adicional en cada elemento de el grafico de barras
+
+
+
+PROMPT PARA FORMULARIO DE VACACIONES
+
+
+crea un formalario de onboarding con colores y ui moderno tambien Agrega la funcionalidad:
+1.  Validar los campos requeridos
+2.  Validar los campos requeridos con mensajes de color rojo
+3.  Mostrar un mensaje de éxito
+4. Opcion para limpiar el formulario"
+
+
+
+FORMULARIO PROMPT
+
+1. create a form about onboarding for my company
+
+
+2 change the theme for brillant colors and modern ui,
+  add address info between section 1 and section 
+
+
+
+
+1 Diseno general trello
+2 Iteracion con IA
+
+4. Agrega funcionalidad sobre trello con IA
+
+
+5. Cambio de HTML por advanced MODE
+
+
+6. agregar funcionalidad a boton desde FX advanced
+
+

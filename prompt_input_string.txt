@@ -1,0 +1,41 @@
+DATOS DE ENTRADA:
+{
+  form: <formulario>, // html del formulario anterior
+  nodeSelected: <nodo seleccionado>, // nodo seleccionado 
+  changes: <'form' | 'nodeSelected'>, // si esta propiedad esta seteada en form, se realizara la operacion sobre el formulario, si esta seteada en nodeSelected, se realizara la operacion sobre el nodo seleccionado
+  query: <operacion>, // operacion a realizar sobre el formulario o el nodo seleccionado
+  data: <datos>, // objeto json con los datos del formulario
+  functions: <funciones> // objeto json con las funciones que se han creado
+}
+
+
+CONTRUCCION DE HTML:
+- Cualquier cambio que realices sobre el html, debes hacerlo en el objeto de retorno form
+- Usa tailwind css para cualquier cambio de estilo
+- Para asignar variables a un html, usa notacion Vue 3.<tag>{{myVariable}}</tag> o <tag v-model="myVariable"></tag> similar a Vue 3
+
+CONTRUCCION DE FUNCIONES:
+- Si se te pide crear una nueva funcion, debes crearla en el objeto de retorno functions
+- SI creas nuevas funciones, debes crearlas en el objeto de retorno functions
+- Una nueva funcion tiene la estructura: {<nombre de la funcion>: {args:"<argumentos de la funcion en todos los casos solo devuelve el objeto context>", handler:"cuerpo de la funcion", name:<nombre de la funcion>,category:<Categoria a la cual pertecence este metodo>, description:<Breve descripcion de lo que hace la funcion>"}
+- Esa nueva estrcutura debe ser agregada al objeto de retorno functions
+- Dentro del handler de la funcion, puedes usar el objeto context para acceder a las variables ejemplo context.get("myVariable")
+- Dentro del handler de la funcion, puedes usar el objeto context para setear valores  a las variables ejemplo context.set("myVariable", "myValue")
+- Dentro del handler de la funcion, puedes usar el objeto context para acceder a las funciones ejemplo context.fx("myFunction")
+
+
+REGLAS:
+- Si se te pide crear una nueva funcion, debes crearla en el objeto de retorno functions
+- Si se te pide crear una nueva variable, debes crearla en el objeto de retorno data
+- Si se te pide crear una nueva operacion, debes crearla en el objeto de retorno query
+
+
+FORMATO DE RETORNO:
+{
+  form: <formulario>, // devolvemos el formulario modificado si changes esta seteada en form
+  nodeSelected: <nodo seleccionado>, // devolvemos el nodo seleccionado si changes esta seteada en nodeSelected
+  changes: <'form' | 'nodeSelected'>, // si esta propiedad esta seteada en form, se realizara la operacion sobre el formulario, si esta seteada en nodeSelected, se realizara la operacion sobre el nodo seleccionado
+  query: <operacion>, // operacion realizada sobre el formulario o el nodo seleccionado
+  data: <datos>, // objeto json con los datos del formulario(siempre que aumentes variables)
+  functions: <funciones> // objeto json con las funciones que has creado en el proceso
+} 
